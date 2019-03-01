@@ -4,6 +4,7 @@ import sys, getopt, os
 sys.path.append('/usr/lib/python3.5/dist-packages') # temporary hack to import the piJuice module
 from pijuice import PiJuice
 from balena import Balena
+from twilio.rest import Client
 
 # Start the SDK
 balena = Balena()
@@ -59,22 +60,49 @@ def update_tag(tag, variable):
     # update device tags
     balena.models.tag.device.set(os.environ['BALENA_DEVICE_UUID'], str(tag), str(variable))
 
+def send_sms(to_number, from_number, message, client):
+    msg = client.messages.create(to=twilio_number, from_=twilio_from_number,body=message)
+    print(msg.sid)
+
 # Change start tag
 start_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 update_tag("START_TIME", start_time)
 
+# ======================[ TWILIO CODE ]================================
+# The idea here is to send user one message every hour in case a device 
+if( os.environ['TWILIO_SID'] and os.environ['TWILIO_TOKEN'] and os.environ['TWILIO_NUMBER'] and os.environ['TWILIO_FROM_NUMBER']):
+    twilio_sid = os.environ['TWILIO_SID']
+    twilio_token = os.environ['TWILIO_TOKEN']
+    twilio_number = os.environ['TWILIO_NUMBER']
+    twilio_from_number = os.environ['TWILIO_FROM_NUMBER']
+
+    # Initiate twilio client
+    client = Client(twilio_sid, twilio_token)
+    twillio_active = True
+    twillio_last_message = datetime.datetime.now()
+    
+# Initial variables
 i = 0
+
 while True:
     
     #Print battery status every 5 seconds
     battery_data = get_battery_paremeters(pijuice)
     print(battery_data)
 
+    # Case power is disconnedted, send twilio text message if twilio alarm is set to true
+    if (os.environ['TWILIO_ALARM'].lower() == "true"):
+        # check if last message was over one hour from the last message 
+        time_difference = (datetime.datetime.now() - twillio_last_message ).total_seconds() / 3600
+        if(time_difference >= 1):
+            send_sms(twilio_number, twilio_from_number,"Hello from Balena 2", client)
+            twillio_last_message = datetime.datetime.now()
+
     # Change tags every minute
     if(i%12==0):
-        print("Updating Tags")
+        # Update tags
         for key, value in battery_data.items():
             update_tag(key, value)
-    
+
     i = i + 1
     sleep(5)
