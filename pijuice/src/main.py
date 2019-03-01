@@ -86,12 +86,13 @@ i = 0
 
 while True:
     
-    #Print battery status every 5 seconds
+    #Read battery data
     battery_data = get_battery_paremeters(pijuice)
-    print(battery_data)
+    # Uncomment the line to display battery status on long
+    # print(battery_data)
 
     # Case power is disconnedted, send twilio text message if twilio alarm is set to true
-    if (os.environ['TWILIO_ALARM'].lower() == "true"):
+    if (os.environ['TWILIO_ALARM'].lower() == "true" and battery_data['power_input'] == "NOT_PRESENT" and battery_data['power_input_board'] == "NOT_PRESENT"):
         # check if last message was over one hour from the last message 
         time_difference = (datetime.datetime.now() - twillio_last_message ).total_seconds() / 3600
         if(time_difference >= 1):

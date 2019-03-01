@@ -22,4 +22,4 @@ Go to [twilio](https://twilio.com) and create an account, and do a text message 
 * `TWILIO_SID` = `...`
 * `TWILIO_TOKEN` = `...`
 
-If you set `TWILIO_ALARM to `True`, it means that once your device is disconnected from power, you will start receiving messages every hour until de power runs out.
+If you set `TWILIO_ALARM` to `True`, it means that once your device is disconnected from power, you will start receiving messages every hour until de power runs out.
