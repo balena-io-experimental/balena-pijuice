@@ -80,7 +80,8 @@ if( os.environ['TWILIO_SID'] and os.environ['TWILIO_TOKEN'] and os.environ['TWIL
     client = Client(twilio_sid, twilio_token)
     twillio_active = True
     twillio_last_message = datetime.datetime.now()
-    
+# =====================================================================
+
 # Initial variables
 i = 0
 
