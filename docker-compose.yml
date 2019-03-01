@@ -1,0 +1,9 @@
+version: '2'
+services:
+  pijuice:
+    build: ./pijuice
+    privileged: true
+    labels: 
+      io.balena.features.balena-api: '1'
+  sample:
+    build: ./sample
