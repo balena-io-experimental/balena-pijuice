@@ -97,7 +97,7 @@ while True:
         # check if last message was over one hour from the last message 
         time_difference = (datetime.datetime.now() - twillio_last_message ).total_seconds() / 3600
         if(time_difference >= 1):
-            send_sms(twilio_number, twilio_from_number,"Hello from Balena 2", client)
+            send_sms(twilio_number, twilio_from_number,"Your device just lost power...", client)
             twillio_last_message = datetime.datetime.now()
 
     # Change tags every minute
