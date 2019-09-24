@@ -20,10 +20,10 @@ pijuice = PiJuice(1,0x14)
 
 # Get all parameters and return as a dictionary
 def get_battery_paremeters(pijuice):
-    
+
     juice = {}
 
-    charge = pijuice.status.GetChargeLevel()		
+    charge = pijuice.status.GetChargeLevel()
     juice['charge'] = charge['data'] if charge['error'] == 'NO_ERROR' else charge['error']
 
     # Temperature [C]
@@ -31,8 +31,8 @@ def get_battery_paremeters(pijuice):
     juice['temperature'] = temperature['data'] if temperature['error'] == 'NO_ERROR' else temperature['error']
 
     # Battery voltage  [V]
-    vbat = pijuice.status.GetBatteryVoltage()	        
-    juice['vbat'] = vbat['data']/1000 if vbat['error'] == 'NO_ERROR' else vbat['error'] 
+    vbat = pijuice.status.GetBatteryVoltage()
+    juice['vbat'] = vbat['data']/1000 if vbat['error'] == 'NO_ERROR' else vbat['error']
 
     # Barrery current [A]
     ibat = pijuice.status.GetBatteryCurrent()
@@ -44,15 +44,15 @@ def get_battery_paremeters(pijuice):
 
     # I/O current [A]
     iio = pijuice.status.GetIoCurrent()
-    juice['iio'] = iio['data']/1000 if iio['error'] == 'NO_ERROR' else iio['error'] 
+    juice['iio'] = iio['data']/1000 if iio['error'] == 'NO_ERROR' else iio['error']
 
     # Get power input (if power connected to the PiJuice board)
     status = pijuice.status.GetStatus()
-    juice['power_input'] = status['data']['powerInput'] if status['error'] == 'NO_ERROR' else status['error'] 
+    juice['power_input'] = status['data']['powerInput'] if status['error'] == 'NO_ERROR' else status['error']
 
     # Get power input (if power connected to the Raspberry Pi board)
     status = pijuice.status.GetStatus()
-    juice['power_input_board'] = status['data']['powerInput5vIo'] if status['error'] == 'NO_ERROR' else status['error'] 
+    juice['power_input_board'] = status['data']['powerInput5vIo'] if status['error'] == 'NO_ERROR' else status['error']
 
     return juice
 
@@ -69,8 +69,8 @@ start_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 update_tag("START_TIME", start_time)
 
 # ======================[ TWILIO CODE ]================================
-# The idea here is to send user one message every hour in case a device 
-if( os.environ['TWILIO_SID'] and os.environ['TWILIO_TOKEN'] and os.environ['TWILIO_NUMBER'] and os.environ['TWILIO_FROM_NUMBER']):
+# The idea here is to send user one message every hour in case a device
+if( os.environ.get('TWILIO_SID') != None and os.environ.get('TWILIO_TOKEN') != None and os.environ.get('TWILIO_NUMBER') != None and os.environ.get('TWILIO_FROM_NUMBER') != None):
     twilio_sid = os.environ['TWILIO_SID']
     twilio_token = os.environ['TWILIO_TOKEN']
     twilio_number = os.environ['TWILIO_NUMBER']
@@ -86,19 +86,20 @@ if( os.environ['TWILIO_SID'] and os.environ['TWILIO_TOKEN'] and os.environ['TWIL
 i = 0
 
 while True:
-    
+
     #Read battery data
     battery_data = get_battery_paremeters(pijuice)
     # Uncomment the line to display battery status on long
     # print(battery_data)
 
     # Case power is disconnedted, send twilio text message if twilio alarm is set to true
-    if (os.environ['TWILIO_ALARM'].lower() == "true" and battery_data['power_input'] == "NOT_PRESENT" and battery_data['power_input_board'] == "NOT_PRESENT"):
-        # check if last message was over one hour from the last message 
-        time_difference = (datetime.datetime.now() - twillio_last_message ).total_seconds() / 3600
-        if(time_difference >= 1):
-            send_sms(twilio_number, twilio_from_number,"Your device just lost power...", client)
-            twillio_last_message = datetime.datetime.now()
+    if (os.environ.get('TWILIO_ALARM') != None):
+        if (os.environ['TWILIO_ALARM'].lower() == "true" and battery_data['power_input'] == "NOT_PRESENT" and battery_data['power_input_board'] == "NOT_PRESENT"):
+            # check if last message was over one hour from the last message
+            time_difference = (datetime.datetime.now() - twillio_last_message ).total_seconds() / 3600
+            if(time_difference >= 1):
+                send_sms(twilio_number, twilio_from_number,"Your device just lost power...", client)
+                twillio_last_message = datetime.datetime.now()
 
     # Change tags every minute
     if(i%12==0):
