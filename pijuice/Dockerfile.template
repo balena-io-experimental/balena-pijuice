@@ -1,8 +1,10 @@
 # base-image for python on any machine using a template variable,
 # see more about dockerfile templates here: https://www.balena.io/docs/learn/develop/dockerfile/
-FROM balenalib/%%BALENA_MACHINE_NAME%%-python:3-stretch-build
+FROM balenalib/%%BALENA_MACHINE_NAME%%-python:3-buster-build
 
-RUN install_packages pijuice-base jq curl 
+RUN install_packages pijuice-base jq curl
+
+COPY pip.conf /etc/pip.conf
 
 # Set our working directory
 WORKDIR /usr/src/app
