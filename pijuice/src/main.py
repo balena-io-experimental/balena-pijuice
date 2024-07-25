@@ -58,7 +58,7 @@ def get_battery_paremeters(pijuice):
 
 def update_tag(tag, variable):
     # update device tags
-    balena.models.tag.device.set(os.environ['BALENA_DEVICE_UUID'], str(tag), str(variable))
+    balena.models.device.tags.set(os.environ['BALENA_DEVICE_UUID'], str(tag), str(variable))
 
 def send_sms(to_number, from_number, message, client):
     msg = client.messages.create(to=twilio_number, from_=twilio_from_number,body=message)
@@ -108,4 +108,4 @@ while True:
             update_tag(key, value)
 
     i = i + 1
-    sleep(5)
+    sleep(60)
