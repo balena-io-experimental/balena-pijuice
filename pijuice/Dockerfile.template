@@ -1,8 +1,8 @@
 # base-image for python on any machine using a template variable,
 # see more about dockerfile templates here: https://www.balena.io/docs/learn/develop/dockerfile/
-FROM balenalib/%%BALENA_MACHINE_NAME%%-python:3-buster-build
+FROM balenalib/%%BALENA_MACHINE_NAME%%-debian:build
 
-RUN install_packages pijuice-base jq curl
+RUN install_packages pijuice-base jq curl python3 python3-pip python3-smbus libssl-dev
 
 COPY pip.conf /etc/pip.conf
 
