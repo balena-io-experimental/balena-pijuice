@@ -1,6 +1,6 @@
 # base-image for python on any machine using a template variable,
 # see more about dockerfile templates here: https://www.balena.io/docs/learn/develop/dockerfile/
-FROM balenalib/%%BALENA_MACHINE_NAME%%-python:3-stretch-run
+FROM balenalib/%%BALENA_MACHINE_NAME%%-python:3-buster-run
 
 # RUN install_packages git
 

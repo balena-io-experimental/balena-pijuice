@@ -1,2 +1,4 @@
-balena-sdk==7.1.0
+balena-sdk==14.4.5
 twilio==6.24.1
+# need to downgrade crypto module so build succeeds
+cryptography==38.0.4
